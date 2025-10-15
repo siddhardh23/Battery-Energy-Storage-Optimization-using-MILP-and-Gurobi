@@ -1,58 +1,101 @@
 # ⚡ Battery Energy Storage Optimization using MILP and Gurobi
 
-This project demonstrates how mathematical optimization techniques (MILP) can be applied to **optimize the charging and discharging schedule** of a grid-connected battery system based on hourly electricity market prices. The goal is to **maximize profit** by buying energy when prices are low and selling when prices are high.
+This project demonstrates how to optimize the **charging and discharging schedule** of a grid-connected battery energy storage system (BESS) using **Mixed-Integer Linear Programming (MILP)** and **Gurobi**.  
+The goal is to **maximize profit** by charging when electricity prices are low and discharging when prices are high — a core strategy for energy storage systems in modern power markets.
 
 ---
 
-## 🚀 Project Overview
+## 📊 Project Overview
 
-Energy storage systems are critical for integrating renewable energy into the grid and managing price volatility in electricity markets.  
-In this project, we model a battery dispatch problem as a **linear optimization problem** and solve it using **Gurobi** in Python.
+Energy storage systems are crucial for integrating renewables, balancing supply and demand, and reducing grid volatility.  
+This project builds a complete optimization model that:
 
-**Key highlights:**
-- Realistic battery operation modeling with state-of-charge dynamics
-- Optimization of charging/discharging schedules based on market prices
-- Analysis of system behavior and profitability under different price conditions
-
----
-
-## 📊 Problem Statement
-
-Given:
-- A time series of hourly electricity prices
-- Battery characteristics (capacity, charge/discharge power, efficiency, etc.)
-
-We aim to:
-- Maximize revenue from charging and discharging
-- Subject to physical and operational constraints
+- Maximizes revenue based on electricity price forecasts.
+- Models **state-of-charge dynamics**, **capacity limits**, and **power constraints**.
+- Ensures realistic operation using **binary decision variables** (charging and discharging cannot occur simultaneously).
+- Outputs a complete operational plan with hourly dispatch, SOC, and total profit.
 
 ---
 
-## 🧮 Optimization Model
+## 🧮 Optimization Problem
 
-**Decision Variables**
-- `charge[t]` – energy charged into the battery at hour *t*
-- `discharge[t]` – energy discharged from the battery at hour *t*
-- `soc[t]` – state of charge of the battery at hour *t*
+### 🎯 Objective Function
 
-**Objective Function**
-\[
-\text{Maximize } \sum_{t=1}^{T} (discharge_t \times price_t - charge_t \times price_t)
-\]
+The objective is to **maximize revenue** from buying and selling energy:
 
-**Constraints**
-- Energy balance: `soc[t+1] = soc[t] + η × charge[t] - (1/η) × discharge[t]`
-- SOC limits: `0 ≤ soc[t] ≤ capacity`
-- Power limits: `0 ≤ charge[t] ≤ P_max`, `0 ≤ discharge[t] ≤ P_max`
+$$
+\max \sum_{t=1}^{T} \left( \text{Discharge}_t \times P_t - \text{Charge}_t \times P_t \right)
+$$
+
+Where:
+- \( P_t \) = electricity price at hour *t*  
+- \( \text{Charge}_t \) = energy charged into the battery (MWh)  
+- \( \text{Discharge}_t \) = energy discharged from the battery (MWh)  
 
 ---
 
-## 🛠️ Tools & Technologies
+## ⚙️ Constraints
 
-- **Python** – modeling and data handling  
-- **Gurobi** – MILP solver  
-- **Pandas** – data manipulation  
-- **Matplotlib** – results visualization  
+### 1. **State-of-Charge Dynamics**
+
+The state of charge (SOC) evolves over time based on charging and discharging:
+
+$$
+\text{SOC}_{t+1} = \text{SOC}_t + \eta \times \text{Charge}_t - \frac{1}{\eta} \times \text{Discharge}_t
+$$
+
+Where:
+- \( \eta \) = round-trip efficiency of the battery  
+- \( \text{SOC}_t \) = state of charge at time *t*
+
+---
+
+### 2. **SOC Bounds**
+
+The battery SOC must always remain within physical capacity limits:
+
+$$
+0 \leq \text{SOC}_t \leq C_{\text{max}}
+$$
+
+Where:
+- \( C_{\text{max}} \) = battery capacity (MWh)
+
+---
+
+### 3. **Power Constraints**
+
+Charging and discharging power are limited by technical specifications:
+
+$$
+0 \leq \text{Charge}_t \leq P_{\text{max}}
+$$
+
+$$
+0 \leq \text{Discharge}_t \leq P_{\text{max}}
+$$
+
+Where:
+- \( P_{\text{max}} \) = maximum charge/discharge power (MW)
+
+---
+
+### 4. **Mutual Exclusivity (Binary Condition)**
+
+The battery cannot charge and discharge simultaneously.  
+We introduce a binary decision variable \( y_t \):
+
+$$
+\text{Charge}_t \leq y_t \times P_{\text{max}}
+$$
+
+$$
+\text{Discharge}_t \leq (1 - y_t) \times P_{\text{max}}
+$$
+
+Where:
+- \( y_t = 1 \) → charging mode  
+- \( y_t = 0 \) → discharging mode  
 
 ---
 
