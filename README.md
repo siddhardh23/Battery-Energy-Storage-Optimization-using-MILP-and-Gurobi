@@ -99,5 +99,59 @@ Where:
 
 ---
 
-## 📁 Project Structure
+## 🧰 Technologies Used
+
+- **Python** – Core programming language  
+- **Gurobi** – MILP solver  
+- **Pandas** – Data handling and analysis  
+- **Matplotlib** – Visualization  
+
+---
+
+## 📊 Results
+
+- The optimization schedules charging during **low-price hours** and discharging during **high-price hours**.
+- The use of binary variables ensures **realistic operation**.
+- The model outputs:
+  - Hour-by-hour charging/discharging decisions
+  - SOC trajectory over time
+  - Total profit from optimized dispatch strategy
+
+Example output:
+
+| Hour | Price (€/MWh) | Charge (MW) | Discharge (MW) | SOC (MWh) |
+|------|--------------|--------------|----------------|-----------|
+| 0    | 32.5         | 20.0         | 0.0            | 70.0      |
+| 1    | 33.2         | 20.0         | 0.0            | 90.0      |
+| 2    | 58.7         | 0.0          | 20.0           | 70.0      |
+
+---
+
+## 🧪 Future Improvements
+
+- Add round-trip efficiency and degradation cost modeling  
+- Include day-ahead and intraday market participation  
+- Extend to multi-battery and multi-site optimization  
+- Integrate real-world grid and weather data for forecasting  
+
+---
+
+## 🧠 What I Learned
+
+- Formulating real-world battery dispatch problems as MILP  
+- Using **binary decision variables** to model operational constraints  
+- Solving optimization problems with Gurobi  
+- Translating results into actionable insights for energy trading and storage systems
+
+---
+
+## 👤 Author
+
+**Siddhardha Naidu Gorja**  
+M.Sc. Mathematical Modelling, Simulation & Optimization  
+Passionate about applying optimization, machine learning, and data science to real-world energy challenges.
+
+---
+
+✅ *“In the world of optimization, every constraint tells a story — and every solution is the art of balancing them.”*
 
